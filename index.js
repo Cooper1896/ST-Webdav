@@ -17,21 +17,60 @@ const LOG_PREFIX = '[WebDAV]';
 /**
  * 动态检测扩展目录路径（兼容任意仓库名安装）
  * 从 import.meta.url 提取扩展在 SillyTavern 中的相对路径
- * 例如: 'third-party/ST-Webdav' 或 'third-party/sillytavern-webdav'
+ * 会尝试多种路径格式以确保兼容不同安装方式
  */
 const EXTENSION_PATH = (() => {
     try {
         const url = new URL(import.meta.url);
-        const path = url.pathname;
+        const path = decodeURIComponent(url.pathname);
+        console.log(`${LOG_PREFIX} import.meta.url:`, import.meta.url);
+        console.log(`${LOG_PREFIX} URL pathname:`, path);
+
+        // 尝试从 URL 中提取扩展路径
         const extIdx = path.indexOf('/extensions/');
         if (extIdx !== -1) {
-            return decodeURIComponent(path.substring(extIdx + '/extensions/'.length)).replace(/\/$/, '');
+            const afterExt = path.substring(extIdx + '/extensions/'.length).replace(/\/[^/]*$/, '').replace(/\/$/, '');
+            console.log(`${LOG_PREFIX} Detected EXTENSION_PATH:`, afterExt);
+            return afterExt;
         }
     } catch (e) {
         console.warn(`${LOG_PREFIX} Failed to detect extension path:`, e);
     }
+    // 尝试多种 fallback 格式
     return 'third-party/ST-Webdav';
 })();
+
+/**
+ * 尝试多种路径格式渲染模板，确保兼容不同安装方式
+ * @param {function} renderFn - renderExtensionTemplateAsync 函数
+ * @param {string} templateName - 模板名（不含 .html）
+ * @param {object} data - 模板数据
+ * @returns {Promise<string|null>} 渲染后的 HTML，失败返回 null
+ */
+async function tryRenderTemplate(renderFn, templateName, data) {
+    // 按优先级尝试不同的路径格式
+    const pathsToTry = [
+        EXTENSION_PATH,                                    // 动态检测的路径
+        EXTENSION_PATH.replace('third-party/', ''),         // 去掉 third-party/ 前缀
+    ];
+    // 去重
+    const uniquePaths = [...new Set(pathsToTry)];
+
+    for (const path of uniquePaths) {
+        try {
+            console.log(`${LOG_PREFIX} Trying template path: '${path}', template: '${templateName}'`);
+            const html = await renderFn(path, templateName, data);
+            if (html) {
+                console.log(`${LOG_PREFIX} Template rendered successfully with path: '${path}'`);
+                return html;
+            }
+        } catch (e) {
+            console.warn(`${LOG_PREFIX} Template path '${path}' failed:`, e?.message || e);
+        }
+    }
+    console.error(`${LOG_PREFIX} All template paths failed for '${templateName}'`);
+    return null;
+}
 
 /**
  * 安全提取错误信息
@@ -675,8 +714,8 @@ async function openFileBrowser() {
             return;
         }
 
-        const browserHtml = await renderExtensionTemplateAsync(
-            EXTENSION_PATH,
+        const browserHtml = await tryRenderTemplate(
+            renderExtensionTemplateAsync,
             'templates/file-browser',
             {}
         );
@@ -827,8 +866,8 @@ async function renderSettingsPanel() {
             return;
         }
 
-        const settingsHtml = await renderExtensionTemplateAsync(
-            EXTENSION_PATH,
+        const settingsHtml = await tryRenderTemplate(
+            renderExtensionTemplateAsync,
             'templates/settings',
             {}
         );
