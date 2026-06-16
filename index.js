@@ -15,6 +15,25 @@ const MODULE_NAME = 'sillytavern_webdav';
 const LOG_PREFIX = '[WebDAV]';
 
 /**
+ * 动态检测扩展目录路径（兼容任意仓库名安装）
+ * 从 import.meta.url 提取扩展在 SillyTavern 中的相对路径
+ * 例如: 'third-party/ST-Webdav' 或 'third-party/sillytavern-webdav'
+ */
+const EXTENSION_PATH = (() => {
+    try {
+        const url = new URL(import.meta.url);
+        const path = url.pathname;
+        const extIdx = path.indexOf('/extensions/');
+        if (extIdx !== -1) {
+            return decodeURIComponent(path.substring(extIdx + '/extensions/'.length)).replace(/\/$/, '');
+        }
+    } catch (e) {
+        console.warn(`${LOG_PREFIX} Failed to detect extension path:`, e);
+    }
+    return 'third-party/ST-Webdav';
+})();
+
+/**
  * 安全提取错误信息
  * @param {*} error - 可能是 Error、字符串或其他类型
  * @returns {string}
@@ -657,7 +676,7 @@ async function openFileBrowser() {
         }
 
         const browserHtml = await renderExtensionTemplateAsync(
-            'third-party/sillytavern-webdav',
+            EXTENSION_PATH,
             'templates/file-browser',
             {}
         );
@@ -809,7 +828,7 @@ async function renderSettingsPanel() {
         }
 
         const settingsHtml = await renderExtensionTemplateAsync(
-            'third-party/sillytavern-webdav',
+            EXTENSION_PATH,
             'templates/settings',
             {}
         );
