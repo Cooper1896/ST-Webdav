@@ -1,0 +1,24 @@
+# Node modules
+node_modules/
+plugin/node_modules/
+server/node_modules/
+
+# Credentials (never commit)
+plugin/credentials/config.enc
+plugin/credentials/*.enc
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Old structure (cleanup)
+server/
+extension/

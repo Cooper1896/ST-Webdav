@@ -1,0 +1,23 @@
+{
+    "display_name": "WebDAV File Manager",
+    "loading_order": 1,
+    "requires": [],
+    "optional": [],
+    "dependencies": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "SillyTavern WebDAV Plugin",
+    "version": "1.0.0",
+    "homePage": "",
+    "auto_update": true,
+    "minimum_client_version": "1.12.0",
+    "i18n": {
+        "zh-cn": "i18n/zh-cn.json"
+    },
+    "hooks": {
+        "install": "onInstall",
+        "activate": "onActivate",
+        "delete": "onDelete",
+        "clean": "onClean"
+    }
+}

@@ -1,0 +1,53 @@
+<!-- WebDAV 文件浏览器弹窗模板 -->
+<div class="webdav-browser">
+
+    <!-- 工具栏 -->
+    <div class="webdav-toolbar">
+        <div class="webdav-toolbar-left">
+            <button class="webdav-btn-back" title="Go Up" data-i18n="Go Up">
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
+            <button class="webdav-btn-refresh" title="Refresh" data-i18n="Refresh">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+            <span class="webdav-current-path">/</span>
+        </div>
+        <div class="webdav-toolbar-right">
+            <button class="webdav-btn-mkdir" title="New Folder" data-i18n="New Folder">
+                <i class="fa-solid fa-folder-plus"></i>
+            </button>
+            <button class="webdav-btn-upload" title="Upload" data-i18n="Upload">
+                <i class="fa-solid fa-upload"></i>
+            </button>
+            <button class="webdav-btn-view-toggle" title="Toggle View">
+                <i class="fa-solid fa-grip"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 面包屑导航 -->
+    <nav class="webdav-breadcrumb">
+        <span class="webdav-breadcrumb-item" data-path="/">Root</span>
+    </nav>
+
+    <!-- 排序栏 -->
+    <div class="webdav-sort-bar">
+        <button class="webdav-sort-btn" data-sort="name" data-i18n="Name">Name</button>
+        <button class="webdav-sort-btn" data-sort="size" data-i18n="Size">Size</button>
+        <button class="webdav-sort-btn" data-sort="lastmod" data-i18n="Modified">Modified</button>
+    </div>
+
+    <!-- 文件列表 -->
+    <div class="webdav-file-list webdav-view-list">
+        <div class="webdav-loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+        </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="webdav-browser-footer">
+        <span class="webdav-item-count">0 items</span>
+        <span class="webdav-quota-info"></span>
+    </div>
+
+</div>

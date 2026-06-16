@@ -1,0 +1,122 @@
+<!-- WebDAV File Manager 设置面板模板 -->
+<div class="webdav-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b data-i18n="WebDAV File Manager">WebDAV File Manager</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+
+            <!-- 服务端插件安装引导（未检测到时显示） -->
+            <div class="webdav-setup-guide" style="display:none;">
+                <div class="webdav-setup-notice">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span data-i18n="Server plugin is required for WebDAV operations.">
+                        Server plugin is required for WebDAV operations.
+                    </span>
+                </div>
+                <div class="webdav-setup-steps">
+                    <p data-i18n="To complete the setup, run the following command in your SillyTavern directory:">
+                        To complete the setup, run the following command in your SillyTavern directory:
+                    </p>
+                    <div class="webdav-setup-code">
+                        <strong>Windows (PowerShell):</strong>
+                        <pre><code id="webdav_install_cmd_win">cd &lt;SillyTavern目录&gt;
+.\data\&lt;user&gt;\extensions\third-party\sillytavern-webdav\install.ps1</code></pre>
+                    </div>
+                    <div class="webdav-setup-code">
+                        <strong>macOS / Linux:</strong>
+                        <pre><code id="webdav_install_cmd_unix">cd &lt;SillyTavern目录&gt;
+bash data/&lt;user&gt;/extensions/third-party/sillytavern-webdav/install.sh</code></pre>
+                    </div>
+                    <p data-i18n="Then restart SillyTavern.">Then restart SillyTavern.</p>
+                    <input id="webdav_recheck_btn" type="button" class="menu_button"
+                           data-i18n="Re-check Server Plugin" value="Re-check Server Plugin" />
+                </div>
+            </div>
+
+            <!-- 连接状态栏 -->
+            <div class="webdav-status-bar">
+                <div class="webdav-status-left">
+                    <span class="webdav-status-indicator status-disconnected"></span>
+                    <span class="webdav-status-text" data-i18n="Disconnected">Disconnected</span>
+                </div>
+            </div>
+
+            <!-- 服务器 URL -->
+            <div class="webdav-field">
+                <label for="webdav_server_url" data-i18n="Server URL">Server URL</label>
+                <input id="webdav_server_url" type="url" class="text_pole"
+                       placeholder="https://cloud.example.com/remote.php/dav/files/user/" />
+            </div>
+
+            <!-- 用户名 -->
+            <div class="webdav-field">
+                <label for="webdav_username" data-i18n="Username">Username</label>
+                <input id="webdav_username" type="text" class="text_pole"
+                       placeholder="username" autocomplete="off" />
+            </div>
+
+            <!-- 密码 -->
+            <div class="webdav-field">
+                <label for="webdav_password" data-i18n="Password">Password</label>
+                <input id="webdav_password" type="password" class="text_pole"
+                       placeholder="••••••••" autocomplete="new-password" />
+                <small class="webdav-hint" data-i18n="Password is never stored in browser. It is encrypted on the server only.">
+                    Password is never stored in browser. It is encrypted on the server only.
+                </small>
+            </div>
+
+            <!-- 根路径 -->
+            <div class="webdav-field">
+                <label for="webdav_root_path" data-i18n="Root Path (optional)">Root Path (optional)</label>
+                <input id="webdav_root_path" type="text" class="text_pole"
+                       placeholder="/" />
+            </div>
+
+            <!-- 认证类型 -->
+            <div class="webdav-field">
+                <label for="webdav_auth_type" data-i18n="Authentication Type">Authentication Type</label>
+                <select id="webdav_auth_type" class="text_pole">
+                    <option value="password" data-i18n="Basic Auth">Basic Auth</option>
+                    <option value="digest" data-i18n="Digest Auth">Digest Auth</option>
+                    <option value="token" data-i18n="Token / Bearer">Token / Bearer</option>
+                </select>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="webdav-button-row">
+                <input id="webdav_connect_btn" type="button" class="menu_button webdav-btn-connect"
+                       data-i18n="Connect" value="Connect" />
+                <input id="webdav_disconnect_btn" type="button" class="menu_button webdav-btn-disconnect"
+                       data-i18n="Disconnect" value="Disconnect" disabled />
+            </div>
+
+            <hr class="webdav-divider" />
+
+            <!-- 文件浏览器按钮 -->
+            <div class="webdav-button-row">
+                <input id="webdav_open_browser_btn" type="button" class="menu_button webdav-btn-browser"
+                       data-i18n="Open File Browser" value="Open File Browser" disabled />
+            </div>
+
+            <hr class="webdav-divider" />
+
+            <!-- 偏好设置 -->
+            <div class="webdav-preferences">
+                <h4 data-i18n="Preferences">Preferences</h4>
+
+                <label class="webdav-checkbox-label">
+                    <input id="webdav_show_hidden" type="checkbox" />
+                    <span data-i18n="Show hidden files">Show hidden files</span>
+                </label>
+
+                <label class="webdav-checkbox-label">
+                    <input id="webdav_confirm_delete" type="checkbox" checked />
+                    <span data-i18n="Confirm before deleting">Confirm before deleting</span>
+                </label>
+            </div>
+
+        </div>
+    </div>
+</div>

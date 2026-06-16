@@ -1,0 +1,168 @@
+# SillyTavern WebDAV File Manager
+
+一个完整的 WebDAV 集成插件，为 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 提供安全的远程文件管理功能。
+
+## 功能特性
+
+- **完整的 WebDAV 客户端**：浏览、上传、下载、删除、移动、复制文件和目录
+- **安全的凭据管理**：密码通过 AES-256-GCM 加密存储在服务端，永远不会发送到浏览器
+- **多种认证方式**：支持 Basic Auth、Digest Auth、Token/Bearer 认证
+- **直观的文件浏览器**：列表/网格视图、面包屑导航、排序、文件类型图标
+- **连接状态反馈**：实时状态指示、错误提示、加载动画
+- **国际化支持**：中文和英文界面
+
+## 快速安装
+
+### 第一步：通过 Install Extension 安装 UI 扩展
+
+1. 打开 SillyTavern
+2. 进入 **Extensions** 面板
+3. 点击 **Install Extension**
+4. 粘贴本仓库的 Git URL
+5. 点击安装
+
+### 第二步：安装服务端插件
+
+UI 扩展安装后，设置面板中会显示安装引导。按照引导执行以下命令：
+
+**Windows (PowerShell):**
+```powershell
+cd <你的SillyTavern目录>
+.\data\<user>\extensions\third-party\sillytavern-webdav\install.ps1
+```
+
+**macOS / Linux:**
+```bash
+cd <你的SillyTavern目录>
+bash data/<user>/extensions/third-party/sillytavern-webdav/install.sh
+```
+
+安装脚本会自动：
+- 将服务端插件复制到 `plugins/webdav/` 目录
+- 安装 npm 依赖
+- 在 `config.yaml` 中启用 `enableServerPlugins: true`
+
+### 第三步：重启 SillyTavern
+
+重启后，设置面板中的安装引导会自动消失，你可以开始使用 WebDAV 功能。
+
+## 使用指南
+
+### 连接 WebDAV 服务器
+
+1. 在 SillyTavern 中打开 **Extensions** 面板
+2. 展开 **WebDAV File Manager** 设置
+3. 填写连接参数：
+   - **Server URL**: WebDAV 服务器地址
+   - **Username**: 用户名
+   - **Password**: 密码
+   - **Root Path**: 根目录路径（可选，默认 `/`）
+   - **Authentication Type**: 认证方式
+4. 点击 **Connect** 按钮
+
+### 常用 WebDAV 服务器 URL 格式
+
+| 服务 | URL 格式 |
+|------|---------|
+| Nextcloud | `https://your-domain.com/remote.php/dav/files/username/` |
+| ownCloud | `https://your-domain.com/remote.php/dav/files/username/` |
+| Apache mod_dav | `https://your-domain.com/webdav/` |
+| Nginx WebDAV | `https://your-domain.com/dav/` |
+| 坚果云 | `https://dav.jianguoyun.com/dav/` |
+
+### 浏览和管理文件
+
+1. 连接成功后点击 **Open File Browser** 按钮
+2. 在弹出的文件浏览器中可以：
+   - **浏览**: 双击文件夹进入，点击面包屑导航跳转
+   - **上传**: 点击上传按钮选择本地文件（支持多文件）
+   - **下载**: 点击文件的下载图标
+   - **删除**: 点击删除图标（可配置确认提示）
+   - **重命名**: 点击重命名图标输入新名称
+   - **新建文件夹**: 点击工具栏的新建文件夹按钮
+   - **切换视图**: 列表/网格两种视图
+   - **排序**: 按名称/大小/修改时间排序
+
+## 架构说明
+
+本插件由两个组件组成（合并在同一个仓库中）：
+
+| 组件 | 运行环境 | 部署位置 |
+|------|---------|---------|
+| **UI 扩展** (根目录文件) | 浏览器 | SillyTavern `extensions/third-party/sillytavern-webdav/` |
+| **服务端插件** (`plugin/` 目录) | Node.js | SillyTavern `plugins/webdav/` |
+
+- **UI 扩展**通过 "Install Extension" 安装，提供设置面板和文件浏览器界面
+- **服务端插件**通过安装脚本部署到 `plugins/` 目录，处理所有 WebDAV 操作和凭据安全存储
+- 两者通过 REST API (`/api/plugins/webdav/`) 通信
+
+## 安全说明
+
+- **密码加密存储**: 使用 AES-256-GCM 加密，密钥由机器特征通过 scrypt 派生
+- **密码不进入浏览器**: 连接成功后密码输入框立即清空，不会存储在前端
+- **路径遍历防护**: 服务端严格验证文件路径，禁止 `..` 目录遍历
+- **不暴露内部信息**: 状态接口仅返回连接信息，不返回密码或内部路径
+
+## 项目结构
+
+```
+sillytavern-webdav/
+├── manifest.json              # UI 扩展清单 (Install Extension 读取)
+├── index.js                   # UI 扩展入口
+├── api-client.js              # API 通信封装
+├── style.css                  # 自定义样式
+├── templates/
+│   ├── settings.html          # 设置面板模板
+│   └── file-browser.html      # 文件浏览器模板
+├── i18n/
+│   ├── zh-cn.json             # 中文翻译
+│   └── en.json                # 英文翻译
+├── plugin/                    # 服务端插件 (由 install 脚本部署)
+│   ├── package.json
+│   ├── index.mjs              # 插件入口
+│   ├── credential-store.mjs   # 凭据加密存储
+│   ├── webdav-client-manager.mjs
+│   ├── routes/
+│   │   ├── connection.mjs     # 连接管理路由
+│   │   ├── files.mjs          # 文件操作路由
+│   │   └── operations.mjs     # 高级操作路由
+│   └── credentials/           # 加密凭据目录
+├── install.sh                 # 一键安装脚本 (macOS/Linux)
+├── install.ps1                # 一键安装脚本 (Windows)
+└── README.md
+```
+
+## REST API
+
+服务端插件在 `/api/plugins/webdav/` 下注册以下端点：
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| `POST` | `/probe` | 探测插件是否在线 |
+| `POST` | `/connect` | 测试连接并保存凭据 |
+| `POST` | `/disconnect` | 断开连接并清除凭据 |
+| `GET` | `/status` | 获取连接状态 |
+| `GET` | `/quota` | 获取磁盘配额 |
+| `POST` | `/list` | 列出目录内容 |
+| `GET` | `/stat` | 获取文件信息 |
+| `POST` | `/download` | 流式下载文件 |
+| `POST` | `/upload` | 上传文件 (multipart) |
+| `POST` | `/delete` | 删除文件或目录 |
+| `POST` | `/mkdir` | 创建目录 |
+| `POST` | `/exists` | 检查文件存在 |
+| `POST` | `/move` | 移动/重命名 |
+| `POST` | `/copy` | 复制文件 |
+
+## 故障排除
+
+| 问题 | 解决方案 |
+|------|---------|
+| 安装引导一直显示 | 确认已执行 install 脚本并重启 SillyTavern；点击 "Re-check" 按钮重新检测 |
+| "Server plugin not available" | 确认 `config.yaml` 中 `enableServerPlugins: true` |
+| 连接失败 (401) | 检查用户名和密码是否正确 |
+| 上传失败 | 检查文件大小是否超过 500MB 限制 |
+| 迁移服务器后无法连接 | 加密密钥依赖机器特征，迁移后需重新输入凭据 |
+
+## 许可证
+
+AGPL-3.0
