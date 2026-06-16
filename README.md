@@ -100,19 +100,6 @@ enableServerPlugins: true
 | Nginx WebDAV | `https://your-domain.com/dav/` |
 | 坚果云 | `https://dav.jianguoyun.com/dav/` |
 
-### 浏览和管理文件
-
-1. 连接成功后点击 **Open File Browser** 按钮
-2. 在弹出的文件浏览器中可以：
-   - **浏览**: 双击文件夹进入，点击面包屑导航跳转
-   - **上传**: 点击上传按钮选择本地文件（支持多文件）
-   - **下载**: 点击文件的下载图标
-   - **删除**: 点击删除图标（可配置确认提示）
-   - **重命名**: 点击重命名图标输入新名称
-   - **新建文件夹**: 点击工具栏的新建文件夹按钮
-   - **切换视图**: 列表/网格两种视图
-   - **排序**: 按名称/大小/修改时间排序
-
 ## 架构说明
 
 本插件由两个组件组成（合并在同一个仓库中）：
@@ -122,16 +109,9 @@ enableServerPlugins: true
 | **UI 扩展** (根目录文件) | 浏览器 | SillyTavern `extensions/third-party/sillytavern-webdav/` |
 | **服务端插件** (`plugin/` 目录) | Node.js | SillyTavern `plugins/webdav/` |
 
-- **UI 扩展**通过 "Install Extension" 安装，提供设置面板和文件浏览器界面
-- **服务端插件**通过安装脚本部署到 `plugins/` 目录，处理所有 WebDAV 操作和凭据安全存储
-- 两者通过 REST API (`/api/plugins/webdav/`) 通信
-
 ## 安全说明
 
-- **密码加密存储**: 使用 AES-256-GCM 加密，密钥由机器特征通过 scrypt 派生
-- **密码不进入浏览器**: 连接成功后密码输入框立即清空，不会存储在前端
-- **路径遍历防护**: 服务端严格验证文件路径，禁止 `..` 目录遍历
-- **不暴露内部信息**: 状态接口仅返回连接信息，不返回密码或内部路径
+使用 AES-256-GCM 加密，密钥由机器特征通过 scrypt 派生
 
 ## 项目结构
 
@@ -182,16 +162,6 @@ sillytavern-webdav/
 | `POST` | `/exists` | 检查文件存在 |
 | `POST` | `/move` | 移动/重命名 |
 | `POST` | `/copy` | 复制文件 |
-
-## 故障排除
-
-| 问题 | 解决方案 |
-|------|---------|
-| 安装引导一直显示 | 确认已执行 install 脚本并重启 SillyTavern；点击 "Re-check" 按钮重新检测 |
-| "Server plugin not available" | 确认 `config.yaml` 中 `enableServerPlugins: true` |
-| 连接失败 (401) | 检查用户名和密码是否正确 |
-| 上传失败 | 检查文件大小是否超过 500MB 限制 |
-| 迁移服务器后无法连接 | 加密密钥依赖机器特征，迁移后需重新输入凭据 |
 
 ## 许可证
 
