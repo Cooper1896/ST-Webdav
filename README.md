@@ -33,6 +33,44 @@ bash data/<user>/extensions/third-party/sillytavern-webdav/install.sh
 - 安装 npm 依赖
 - 在 `config.yaml` 中启用 `enableServerPlugins: true`
 
+### 第二步（手动配置）
+
+如果不使用安装脚本，也可以手动配置：
+
+**1. 复制服务端插件**
+
+将扩展目录中的 `plugin/` 文件夹完整复制到 SillyTavern 的 `plugins/webdav/` 目录：
+
+```
+<SillyTavern目录>/plugins/webdav/
+├── index.mjs
+├── package.json
+├── credential-store.mjs
+├── webdav-client-manager.mjs
+├── routes/
+│   ├── connection.mjs
+│   ├── files.mjs
+│   └── operations.mjs
+└── credentials/
+```
+
+**2. 安装 npm 依赖**
+
+```bash
+cd <SillyTavern目录>/plugins/webdav
+npm install
+```
+
+**3. 启用服务端插件**
+
+编辑 SillyTavern 根目录下的 `config.yaml`，将 `enableServerPlugins` 设为 `true`：
+
+```yaml
+enableServerPlugins: true
+```
+
+> 如果 `config.yaml` 中没有该字段，手动添加即可。
+
 ### 第三步：重启 SillyTavern
 
 重启后，设置面板中的安装引导会自动消失，你可以开始使用 WebDAV 功能。
