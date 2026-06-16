@@ -72,6 +72,19 @@ enableServerPlugins: true
 
 > 如果 `config.yaml` 中没有该字段，手动添加即可。
 
+#### 文件位置参考
+
+安装完成后，各组件位置如下：
+
+| 组件 | 路径 |
+|------|------|
+| UI 扩展文件 | `<SillyTavern目录>/data/<user>/extensions/ST-Webdav/` |
+| 服务端插件 | `<SillyTavern目录>/plugins/webdav/` |
+| 凭据存储 | `<SillyTavern目录>/plugins/webdav/credentials/config.enc` |
+| 安装脚本 | `<SillyTavern目录>/data/<user>/extensions/ST-Webdav/install.cmd` (Windows) |
+
+> `<user>` 是你的 SillyTavern 用户名，默认为 `default-user`。
+
 ### 第三步：重启 SillyTavern
 
 重启后，设置面板中的安装引导会自动消失，你可以开始使用 WebDAV 功能。
