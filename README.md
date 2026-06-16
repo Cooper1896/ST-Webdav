@@ -14,6 +14,7 @@
 
 ### 第二步：安装服务端插件
 
+#### 1.插件安装
 UI 扩展安装后，设置面板中会显示安装引导。按照引导执行以下命令：
 
 **Windows (PowerShell):**
@@ -33,7 +34,7 @@ bash data/<user>/extensions/third-party/sillytavern-webdav/install.sh
 - 安装 npm 依赖
 - 在 `config.yaml` 中启用 `enableServerPlugins: true`
 
-### 第二步（手动配置）
+#### 2.手动配置
 
 如果不使用安装脚本，也可以手动配置：
 
