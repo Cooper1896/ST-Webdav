@@ -14,16 +14,18 @@ echo   SillyTavern WebDAV Plugin Installer
 echo ==========================================
 echo.
 
-REM 确定 SillyTavern 目录（优先使用 ST_DIR 环境变量，否则用当前目录）
-if defined ST_DIR (
-    set "ST_DIR=%ST_DIR%"
-) else (
-    set "ST_DIR=%CD%"
-)
-
 REM 确定脚本所在目录（即扩展安装目录）
 set "SCRIPT_DIR=%~dp0"
 set "SCRIPT_DIR=%SCRIPT_DIR:~0,-1%"
+
+REM 确定 SillyTavern 目录
+if defined ST_DIR (
+    set "ST_DIR=%ST_DIR%"
+) else (
+    REM 自动检测：脚本在 data/<user>/extensions/ST-Webdav/ 下，往上 4 层即 ST 根目录
+    set "ST_DIR=%SCRIPT_DIR%\..\..\..\.."
+    for %%I in ("!ST_DIR!") do set "ST_DIR=%%~fI"
+)
 
 set "PLUGIN_DIR=%ST_DIR%\plugins\webdav"
 set "CONFIG=%ST_DIR%\config.yaml"
@@ -32,7 +34,7 @@ REM 验证 SillyTavern 目录
 if exist "%ST_DIR%\server.js" goto :st_ok
 if exist "%ST_DIR%\package.json" goto :st_ok
 echo [!] 未找到 SillyTavern 安装目录: %ST_DIR%
-echo     请在 SillyTavern 根目录下执行此脚本，或设置 ST_DIR:
+echo     脚本自动检测到的路径可能不正确，请手动设置 ST_DIR:
 echo     set ST_DIR=C:\path\to\SillyTavern
 echo     install.cmd
 goto :fail
