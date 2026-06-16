@@ -35,7 +35,7 @@ echo [!] 未找到 SillyTavern 安装目录: %ST_DIR%
 echo     请在 SillyTavern 根目录下执行此脚本，或设置 ST_DIR:
 echo     set ST_DIR=C:\path\to\SillyTavern
 echo     install.cmd
-exit /b 1
+goto :fail
 :st_ok
 
 echo [*] SillyTavern 目录: %ST_DIR%
@@ -91,6 +91,10 @@ if exist "%CONFIG%" (
 )
 
 echo.
+goto :end
+
+:end
+echo.
 echo ==========================================
 echo   安装完成！
 echo ==========================================
@@ -99,6 +103,15 @@ echo   2. 打开 Extensions 面板
 echo   3. 找到 WebDAV File Manager 设置
 echo   4. 输入 WebDAV 服务器信息并连接
 echo.
+goto :done
 
+:fail
+echo.
+echo ==========================================
+echo   安装失败！请检查上方错误信息
+echo ==========================================
+echo.
+
+:done
 endlocal
 pause
