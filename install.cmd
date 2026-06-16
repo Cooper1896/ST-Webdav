@@ -4,8 +4,7 @@ setlocal enabledelayedexpansion
 
 REM ============================================================
 REM SillyTavern WebDAV Plugin - 一键安装脚本 (Windows CMD)
-REM 用法: 在 SillyTavern 根目录双击运行，或在 CMD 中执行
-REM   install.cmd
+REM 用法: 在扩展目录双击运行，或从任意位置执行
 REM ============================================================
 
 echo.
@@ -50,49 +49,48 @@ if exist "%PLUGIN_DIR%\index.mjs" (
     echo [*] 安装 Server Plugin...
     if not exist "%PLUGIN_DIR%" mkdir "%PLUGIN_DIR%"
     xcopy /E /I /Y /Q "%SCRIPT_DIR%\plugin\*" "%PLUGIN_DIR%\" >nul 2>&1
+    if errorlevel 1 (
+        echo [!] 复制文件失败
+        goto :fail
+    )
     echo [+] Server Plugin 已安装到 %PLUGIN_DIR%
 )
 
 REM 2. 安装 npm 依赖
 echo [*] 安装 npm 依赖...
 pushd "%PLUGIN_DIR%"
-npm install --silent 2>nul
+call npm install --silent 2>nul
 if errorlevel 1 (
-    npm install
+    call npm install
+    if errorlevel 1 (
+        echo [!] npm install 失败
+        popd
+        goto :fail
+    )
 )
 popd
 echo [+] 依赖安装完成
 
 REM 3. 启用 Server Plugins
-if exist "%CONFIG%" (
-    findstr /C:"enableServerPlugins: true" "%CONFIG%" >nul 2>&1
-    if !errorlevel! equ 0 (
-        echo [+] Server plugins 已在 config.yaml 中启用
-    ) else (
-        findstr /C:"enableServerPlugins: false" "%CONFIG%" >nul 2>&1
-        if !errorlevel! equ 0 (
-            REM 替换 false 为 true（使用临时文件）
-            set "TMPFILE=%CONFIG%.tmp"
-            (
-                for /f "usebackq delims=" %%L in ("%CONFIG%") do (
-                    set "LINE=%%L"
-                    echo !LINE:enableServerPlugins: false=enableServerPlugins: true!
-                )
-            ) > "!TMPFILE!"
-            move /y "!TMPFILE!" "%CONFIG%" >nul
-            echo [+] 已在 config.yaml 中启用 Server Plugins
-        ) else (
-            echo. >> "%CONFIG%"
-            echo enableServerPlugins: true>> "%CONFIG%"
-            echo [+] 已添加 enableServerPlugins: true 到 config.yaml
-        )
-    )
-) else (
+if not exist "%CONFIG%" (
     echo [!] config.yaml 未找到，请启动一次 SillyTavern 后重试
     echo     或手动创建 config.yaml 并添加: enableServerPlugins: true
+    goto :end
 )
 
-echo.
+findstr /C:"enableServerPlugins: true" "%CONFIG%" >nul 2>&1
+if !errorlevel! equ 0 (
+    echo [+] Server plugins 已在 config.yaml 中启用
+    goto :end
+)
+
+REM 使用 node 安全修改 config.yaml（避免 CMD 处理特殊字符崩溃）
+echo [*] 修改 config.yaml...
+node -e "const fs=require('fs');const f='%CONFIG:\=\\%';let c=fs.readFileSync(f,'utf8');if(c.includes('enableServerPlugins: false')){c=c.replace('enableServerPlugins: false','enableServerPlugins: true');fs.writeFileSync(f,c);console.log('[+] 已将 enableServerPlugins 设为 true')}else{fs.appendFileSync(f,'\nenableServerPlugins: true\n');console.log('[+] 已添加 enableServerPlugins: true')}"
+if errorlevel 1 (
+    echo [!] 修改 config.yaml 失败，请手动添加: enableServerPlugins: true
+)
+
 goto :end
 
 :end
