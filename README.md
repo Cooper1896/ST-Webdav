@@ -2,15 +2,6 @@
 
 一个完整的 WebDAV 集成插件，为 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 提供安全的远程文件管理功能。
 
-## 功能特性
-
-- **完整的 WebDAV 客户端**：浏览、上传、下载、删除、移动、复制文件和目录
-- **安全的凭据管理**：密码通过 AES-256-GCM 加密存储在服务端，永远不会发送到浏览器
-- **多种认证方式**：支持 Basic Auth、Digest Auth、Token/Bearer 认证
-- **直观的文件浏览器**：列表/网格视图、面包屑导航、排序、文件类型图标
-- **连接状态反馈**：实时状态指示、错误提示、加载动画
-- **国际化支持**：中文和英文界面
-
 ## 快速安装
 
 ### 第一步：通过 Install Extension 安装 UI 扩展
